@@ -19,6 +19,7 @@ namespace WikiDigger
         public static String pagesFile = @"D:\wp\tube\categories\selectedpages.txt";
         public static String pagesFilonCategory = @"D:\wp\tube\categories\selectedpagesForCategory.txt";
         static public char[] alpha = "!0123456789АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-
+        static public String AnWarAllAcIn = @"D:\wp\tube\other\anwar\allTweetsAc.csv";
+        static public String AnWarAllAcOut = @"D:\wp\tube\other\anwar\allTweetsAcTranslation1.csv";
     }
 }

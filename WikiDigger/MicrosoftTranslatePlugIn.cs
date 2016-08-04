@@ -32,6 +32,39 @@ namespace WikiDigger
 
         }
 
+        public static String Translate(HttpRequestMessageProperty httpRequestProperty,string authToken, string what, string to)
+        {
+            // Add TranslatorService as a service reference, Address:http://api.microsofttranslator.com/V2/Soap.svc
+            LanguageServiceClient client = new LanguageServiceClient();
+            //Set Authorization header before sending the request
+            //HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+            //httpRequestProperty.Method = "POST";
+            //httpRequestProperty.Headers.Add("Authorization", authToken);
+            // Creates a block within which an OperationContext object is in scope.
+            // to = "en";
+
+            using (OperationContextScope scope = new OperationContextScope(client.InnerChannel))
+            {
+                OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                //string sourceText = "<UL><LI>Use generic class names. <LI>Use pixels to express measurements for padding and margins. <LI>Use percentages to specify font size and line height. <LI>Use either percentages or pixels to specify table and container width.   <LI>When selecting font families, choose browser-independent alternatives.   </LI></UL>";
+                string sourceText = what;
+
+                //string sourceText = "A cat ate a dog";
+
+                string translationResult;
+                //Keep appId parameter blank as we are sending access token in authorization header.
+
+                try { translationResult = client.Translate("", sourceText, "", to, "text/plain", "general", ""); }
+                catch(Exception ex) { return ex.ToString(); }
+                //Console.OutputEncoding = Encoding.UTF8;
+                //Console.WriteLine("Translation for source {0} from {1} to {2} is", sourceText, "ru", "en");
+                //Console.WriteLine(translationResult);
+                //Console.WriteLine("Press any key to continue...");
+                //Console.ReadKey(true);
+                return translationResult;
+            }
+
+        }
         public static String Translate(string authToken, string what, string to)
         {
             // Add TranslatorService as a service reference, Address:http://api.microsofttranslator.com/V2/Soap.svc
@@ -76,6 +109,55 @@ namespace WikiDigger
 
         }
 
+        public static void AddTranslationToAllRecordsTweetsAnWarWrap()
+        {
+            StreamReader sr = new StreamReader(Common.AnWarAllAcIn);
+            StreamWriter sw = new StreamWriter(Common.AnWarAllAcOut);
+
+            String str = sr.ReadLine();
+            sw.WriteLine(str+"^translation_desc^destination_eng");
+
+            String admToken = GetTokenWrapper();
+            HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+            httpRequestProperty.Method = "POST";
+            httpRequestProperty.Headers.Add("Authorization", admToken);
+            Int64 count = 0;
+
+            while ((str=sr.ReadLine())!=null)
+            {
+                String[] items = str.Split('^');
+                if (items.Length == 29)
+                {
+                    sw.WriteLine(str);
+                    continue;
+                }
+                Int32 pos = items.Length - 1;
+                String translation = items[pos];
+                String destination = items[13];
+                out1: ;
+                if (translation!="" && !IsEnglish(translation)) translation=Translate(httpRequestProperty,admToken,translation,"en");
+                if (translation.Contains("ServiceModel.ProtocolException")) goto out3;
+                out2:;
+                if (destination != "" && !IsEnglish(destination)) destination = Translate(httpRequestProperty, admToken, destination, "en");
+                if (destination.Contains("ServiceModel.ProtocolException")) goto out2;
+                sw.WriteLine(str + "^" + translation+"^"+destination);
+                count++;
+            }
+            out3:;
+            sr.Close();
+            sw.Close();
+
+        }
+
+        static public bool IsEnglish(string inputstring)
+        {
+            Regex regex = new Regex(@"[A-Za-z0-9 .,-=+(){}\[\]\\]");
+            MatchCollection matches = regex.Matches(inputstring);
+            if (matches.Count.Equals(inputstring.Length))
+                return true;
+            else
+                return false;
+        }
 
     }
 

@@ -193,7 +193,7 @@ namespace WikiDigger
                             List<String> pair = new List<string>();
                             pair.Add(key);
                             pair.Add(node.InnerText);
-                            pair.Add("0");
+                            pair.Add("14");
                             buf.Add(pair);
                         }
                     }

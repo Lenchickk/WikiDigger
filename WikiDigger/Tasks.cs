@@ -37,6 +37,12 @@ namespace WikiDigger
 
         }
 
+        //add a string with the translation to the file on Аnоmymоus Wаr
+        static public void AddTranslationToAllRecordsTweetsAnWar()
+        {
+            MicrosoftTranslatePlugIn.AddTranslationToAllRecordsTweetsAnWarWrap();
+        }
+
 
     }
 }
