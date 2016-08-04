@@ -4,6 +4,8 @@ using HtmlAgilityPack;
 using System.IO;
 using System.Net;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
 
 namespace WikiDigger
 {
@@ -31,10 +33,13 @@ namespace WikiDigger
                 var html = reader.ReadToEnd();
                 document.LoadHtml(html);
 
-                String tags = "//div[@class='mw-content-ltr']";
+                String tags = "//div[@id='category-empty']";
+                if (document.DocumentNode.SelectNodes(tags)!=null) continue;
+
+                tags = "//div[@class='mw-content-ltr']";
                 HtmlNodeCollection nodes = document.DocumentNode.SelectNodes(tags);
                 HtmlNodeCollection nodes2 = null; 
-
+               
                 foreach (HtmlNode node in nodes)
                 {
                     if (node.FirstChild.Name=="h3" || node.FirstChild.Name == "div")
@@ -44,14 +49,21 @@ namespace WikiDigger
                         nodes2 = document.DocumentNode.SelectNodes(tags);
                         goto leave;
                     }
+
+                   
                 }
+                continue;  
             leave:;
 
                 foreach (HtmlNode node in nodes2)
                 {
+                    if (node.InnerText.Contains("Обсуждение")) continue;
+                    if (node.InnerText.Contains("Шаблон")) continue;
+                    if (node.FirstChild.Name == "#text") continue;
+                    String val = RemoveCommentPart(node.InnerText);
                     List<String> pair = new List<string>();
                     pair.Add(keys[category]);
-                    pair.Add(node.InnerText);
+                    pair.Add(val.Replace("\n","").Replace("\t","").Replace("►","").Replace("[×]","").Trim());
                     pair.Add("0");
                     buf.Add(pair);
                 }
@@ -60,6 +72,15 @@ namespace WikiDigger
             return buf;
         }
 
+        static String RemoveCommentPart(String str)
+        {
+            if (str.Contains("(") && str.Contains(")") && str.Contains(".") && str.Contains(":"))
+            {
+                Int32 pos = str.LastIndexOf("(");
+                return str.Substring(0, pos - 1);
+            }
+            return str;
+        }
 
         static public List<List<String>> ReturnWikiCategory(SortedDictionary<String, Int64> keys)
         {

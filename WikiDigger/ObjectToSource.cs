@@ -19,7 +19,7 @@ namespace WikiDigger
                 String str = "";
                 foreach (T t in l)
                 {
-                    str += t.ToString()+"\t";
+                    str += t.ToString().Trim()+"\t";
                 }
                 sw.WriteLine(str.Substring(0,str.Length-1));
             }

@@ -11,7 +11,7 @@ namespace WikiDigger
         static void Main(string[] args)
         {
             //Tasks.PutToFileAllCategoriesForKeyWordsRU();
-            //Tasks.PutToFileAllPagesForKeyWordsRU();
+            Tasks.PutToFileAllPagesForKeyWordsRU();
             Tasks.PutToFileAllPagesForCategoriesRU();
         }
     }
