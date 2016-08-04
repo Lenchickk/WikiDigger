@@ -26,6 +26,17 @@ namespace WikiDigger
 
         }
 
+        //extact all pages for a set of categories from Russian Wikipedia
+        //table - categories
+
+        static public void PutToFileAllPagesForCategoriesRU()
+        {
+            SortedDictionary<String, String> categories = PostGrePlugIn.getTableCategoriesAsDictionary();
+            List<List<String>> pages = HTMLDigger.ReturnWikiPagesForCategories(categories);
+            ObjectToSource.ComplexListToSource<String>(Common.pagesFilonCategory, pages);
+
+        }
+
 
     }
 }

@@ -13,6 +13,7 @@ namespace WikiDigger
     {
         static String connstring = String.Format("Server=localhost;Port=5432;User Id=postgres;Password=admin;Database=postgres;");
         static String getKeysQuery = "select kid,title from public.keys;";
+        static String getCategoriesQuery = "select _key, title from categories;";
         public static IDataReader reader;
 
 
@@ -30,6 +31,18 @@ namespace WikiDigger
             return dict;
         }
 
+        static SortedDictionary<String, String> TableToDictionaryWithIndexStringChild(DataTable dt, string name, string indexName)
+        {
+            SortedDictionary<String, String> dict = new SortedDictionary<string,String>();
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dict.ContainsKey(dr[name].ToString())) continue;
+                dict.Add(dr[name].ToString(), dr[indexName].ToString());
+            }
+
+            return dict;
+        }
 
         static SortedDictionary<String, List<String>> TableToDictionaryWithIndex(DataTable dt)
         {
@@ -56,6 +69,16 @@ namespace WikiDigger
         static public DataTable getTableKeys()
         {
             return getTablePostGre(getKeysQuery);
+        }
+
+        static public SortedDictionary<String, String> getTableCategoriesAsDictionary()
+        {
+            return TableToDictionaryWithIndexStringChild(getTableCategories(), "title", "_key");
+        }
+
+        static public DataTable getTableCategories()
+        {
+            return getTablePostGre(getCategoriesQuery);
         }
 
         static public DataTable getTablePostGre(String sqlQuery)

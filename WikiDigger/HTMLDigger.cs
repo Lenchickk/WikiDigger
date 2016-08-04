@@ -13,6 +13,54 @@ namespace WikiDigger
 
         //namespace 14 - category
         //0 - general
+
+        static public List<List<String>> ReturnWikiPagesForCategories(SortedDictionary<String, String> keys)
+        {
+            List<List<String>> buf = new List<List<String>>();
+            var document = new HtmlDocument();
+            var client = new WebClient();
+            bool over = true;
+            String baseString = "https://ru.wikipedia.org/wiki/Категория:";
+            String tail = "";
+
+            foreach (String category in keys.Keys)
+            {
+                var stream = client.OpenRead(baseString + category.Trim().Replace(' ','_'));
+
+                var reader = new StreamReader(stream, Encoding.GetEncoding("UTF-8"));
+                var html = reader.ReadToEnd();
+                document.LoadHtml(html);
+
+                String tags = "//div[@class='mw-content-ltr']";
+                HtmlNodeCollection nodes = document.DocumentNode.SelectNodes(tags);
+                HtmlNodeCollection nodes2 = null; 
+
+                foreach (HtmlNode node in nodes)
+                {
+                    if (node.FirstChild.Name=="h3" || node.FirstChild.Name == "div")
+                    {
+                        tags = "//li";
+                        document.LoadHtml(node.InnerHtml);
+                        nodes2 = document.DocumentNode.SelectNodes(tags);
+                        goto leave;
+                    }
+                }
+            leave:;
+
+                foreach (HtmlNode node in nodes2)
+                {
+                    List<String> pair = new List<string>();
+                    pair.Add(keys[category]);
+                    pair.Add(node.InnerText);
+                    pair.Add("0");
+                    buf.Add(pair);
+                }
+            }
+
+            return buf;
+        }
+
+
         static public List<List<String>> ReturnWikiCategory(SortedDictionary<String, Int64> keys)
         {
             List<List<String>> buf = new List<List<String>>();
@@ -125,6 +173,82 @@ namespace WikiDigger
                             pair.Add(key);
                             pair.Add(node.InnerText);
                             pair.Add("0");
+                            buf.Add(pair);
+                        }
+                    }
+
+                }
+
+                tags = "//div[@class='mw-allpages-nav']";
+                nodes = document.DocumentNode.SelectNodes(tags);
+
+
+                foreach (HtmlNode node in nodes)
+                {
+                    String val = node.InnerHtml;
+                    if (node.InnerText.Contains("|"))
+                    {
+                        val = val.Substring(val.IndexOf("|"));
+                    }
+                    if (node.InnerText.Contains("Следующая страница"))
+                    {
+                        int firstpos = val.IndexOf("\"");
+                        int lastpos = val.Substring(firstpos + 1).IndexOf("\"");
+                        tail = val.Substring(firstpos + 1, lastpos);
+                        tail = QuotedPrintable.DecodeQuotedPrintable(tail, "Привет");
+                        tail = tail.Replace("amp;", "");
+                        goto jump;
+                    }
+
+
+                }
+                over = false;
+            jump:;
+            } while (over);
+
+            return buf;
+
+
+        }
+
+
+        static public List<List<String>> ReturnWikiPages(SortedDictionary<String, String> keys)
+        {
+            List<List<String>> buf = new List<List<String>>();
+            var document = new HtmlDocument();
+            var client = new WebClient();
+            bool over = true;
+            String baseString = "https://ru.wikipedia.org";
+            //foreach (Char c in Common.alpha)
+            String tail = "/wiki/Служебная:Все_страницы?from=&to=&namespace=0&hideredirects=1";
+            do
+            {
+
+                var stream = client.OpenRead(baseString + tail);
+
+                var reader = new StreamReader(stream, Encoding.GetEncoding("UTF-8"));
+                var html = reader.ReadToEnd();
+                document.LoadHtml(html);
+
+
+                String tags = "//li";
+                HtmlNodeCollection nodes = document.DocumentNode.SelectNodes(tags);
+
+
+                foreach (HtmlNode node in nodes)
+                {
+
+                    String value = node.InnerText.ToLower();
+
+
+                    foreach (String key in keys.Keys)
+                    {
+                        if (value.Contains(key.ToLower()))
+                        {
+                            List<String> pair = new List<string>();
+                            pair.Add(key);
+                            pair.Add(node.InnerText);
+                            pair.Add("14");
                             buf.Add(pair);
                         }
                     }

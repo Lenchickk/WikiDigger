@@ -17,6 +17,7 @@ namespace WikiDigger
         static String pageTablePostGre = "pages";
         public static String categoryFile = @"D:\wp\tube\categories\selectedcat.txt";
         public static String pagesFile = @"D:\wp\tube\categories\selectedpages.txt";
+        public static String pagesFilonCategory = @"D:\wp\tube\categories\selectedpagesForCategory.txt";
         static public char[] alpha = "!0123456789АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
 
     }
