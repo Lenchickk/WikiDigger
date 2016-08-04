@@ -12,7 +12,7 @@ namespace WikiDigger
     static class PostGrePlugIn
     {
         static String connstring = String.Format("Server=localhost;Port=5432;User Id=postgres;Password=admin;Database=postgres;");
-        static String getKeysQuery = "select * from public.keys";
+        static String getKeysQuery = "select kid,title from public.keys;";
         public static IDataReader reader;
 
 

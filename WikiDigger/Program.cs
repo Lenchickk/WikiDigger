@@ -10,6 +10,8 @@ namespace WikiDigger
     {
         static void Main(string[] args)
         {
+            //Tasks.PutToFileAllCategoriesForKeyWordsRU();
+            Tasks.PutToFileAllPagesForKeyWordsRU();
         }
     }
 }
