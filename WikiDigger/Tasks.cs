@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace WikiDigger
 {
     static public class Tasks
     {
+        //Create a table with post-soviet ranges to push to PostGreqsql later
+       
         //extact all categories for a set of keywords from Russian Wikipedia
         static public void PutToFileAllCategoriesForKeyWordsRU()
         {
@@ -42,6 +45,38 @@ namespace WikiDigger
         {
             MicrosoftTranslatePlugIn.AddTranslationToAllRecordsTweetsAnWarWrap();
         }
+
+        static public void CleanUSSRIP()
+        {
+            StreamReader sr = new StreamReader(Common.ipRangeRawUSSR);
+            StreamWriter sw = new StreamWriter(Common.ipRangeReadyToTableUSSR);
+
+            String str = "";
+            String country = "";
+            while ((str = sr.ReadLine()) != null)
+            {
+                if (str.Contains("#"))
+                {
+                    country = str.Replace("#", String.Empty);
+                    continue;
+                }
+                String[] items = str.Split('-');
+                sw.WriteLine(country + "\t" + items[0] + "\t" + items[1]);
+
+            }
+
+            sr.Close();
+            sw.Close();
+
+        }
+
+
+        static public void CreateEditsAndEditorsTables()
+        {
+            Common.interestPages = PostGrePlugIn.DataTableToHashSet(PostGrePlugIn.getTablePostGre(Common.getPagesSQL));
+            ParseXML.ParseXMLwikiForEdits(Common.wikixmlFile);
+
+        } 
 
 
     }

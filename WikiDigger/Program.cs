@@ -13,9 +13,9 @@ namespace WikiDigger
             //Tasks.PutToFileAllCategoriesForKeyWordsRU();
             //Tasks.PutToFileAllPagesForKeyWordsRU();
             //Tasks.PutToFileAllPagesForCategoriesRU();
-            Tasks.AddTranslationToAllRecordsTweetsAnWar();
-
-
+            //Tasks.AddTranslationToAllRecordsTweetsAnWar();
+            //Tasks.CleanUSSRIP();
+            Tasks.CreateEditsAndEditorsTables();
 
         }
     }

@@ -9,15 +9,64 @@ using System.Data;
 
 namespace WikiDigger
 {
-    static class PostGrePlugIn
+    public static class PostGrePlugIn
     {
-        static String connstring = String.Format("Server=localhost;Port=5432;User Id=postgres;Password=admin;Database=postgres;");
-        static String getKeysQuery = "select kid,title from public.keys;";
-        static String getCategoriesQuery = "select _key, title from categories;";
+        public static String connstring = String.Format("Server=localhost;Port=5432;User Id=postgres;Password=admin;Database=postgres;");
+        public static String getKeysQuery = "select kid,title from public.keys;";
+        public static String getCategoriesQuery = "select _key, title from categories;";
         public static IDataReader reader;
 
 
         //Index and name reverted. A table with 2 rows into a dictionary
+
+        public static String ReturnIpQuery(String table, String ip, String fields)
+        {
+            return "select " + fields +" from " + table +" where '" + ip + "'::inet >= ip_start and '" + ip + "'::inet <= ip_end;";
+        }
+
+        public static HashSet<String> DataTableToHashSet(DataTable dt)
+        {
+            HashSet<String> hs = new HashSet<string>();
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                hs.Add(QuotedPrintable.EncodeQuotedPrintable(dr[0].ToString().Trim()));
+            }
+            return hs;
+
+        }
+        public static List<String> DataTableToList(DataTable dt)
+        {
+            List<String> hs = new List<string>();
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                hs.Add(dr[0].ToString().Trim());
+            }
+            if (dt.Rows.Count == 0) hs.Add("NA");
+            return hs;
+
+        }
+
+        public static void GetTrollResults(DataTable dt, out byte troll, out double distance,out Int32 type)
+        {
+            type = 0;
+            distance = -1;
+            if (dt.Rows.Count==0)
+            {
+                troll = 0;
+                distance = -1;
+                type = 0;
+                return;
+            }
+            troll = 1;
+            foreach (DataRow row in dt.Rows)
+            {
+                for (int i = 0; i < 4; i++) if (row[i].ToString() != "0") type = i + 1;
+                distance = Double.Parse(row[4].ToString());
+            }
+            return;
+        }
 
         static SortedDictionary<String, Int64> TableToDictionaryWithIndex(DataTable dt, string name, string indexName)
         {
@@ -81,6 +130,12 @@ namespace WikiDigger
             return getTablePostGre(getCategoriesQuery);
         }
 
+        static public NpgsqlConnection conn = new NpgsqlConnection(connstring);
+        static public void openConnection()
+        {
+           
+            conn.Open();
+        }
         static public DataTable getTablePostGre(String sqlQuery)
         {
             DataTable dt = new DataTable();
@@ -88,8 +143,8 @@ namespace WikiDigger
 
             try
             {
-                NpgsqlConnection conn = new NpgsqlConnection(connstring);
-                conn.Open();
+                //NpgsqlConnection conn = new NpgsqlConnection(connstring);
+                //conn.Open();
 
                 NpgsqlDataAdapter da = new NpgsqlDataAdapter(sqlQuery, conn);
                 ds.Reset();
