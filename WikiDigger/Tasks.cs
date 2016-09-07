@@ -78,6 +78,87 @@ namespace WikiDigger
 
         } 
 
+        static public void MergePageViewTables(String from, String to)
+        {
+            StreamReader sr = new StreamReader(from);
+            StreamWriter sw = new StreamWriter(to, true);
+
+            String str = "";
+            String[] buf=null;
+
+            while ((str=sr.ReadLine())!=null)
+            {
+                String[] items = str.Split('\t');
+                if (items.Length < 6) continue;
+                
+                if (items[1]=="1")
+                {
+                    buf = items;
+                    continue;   
+                }
+
+                sw.WriteLine(items[0] + "\t" + items[2] + "\t" + items[3] + "\t" + items[4] + "\t" + items[5] + "\t" + buf[2]+ "\t" + buf[3] + "\t" + buf[4] + "\t" + buf[5]);
+
+            }
+
+            sw.Close();
+            sr.Close();
+
+        }
+
+
+        static public void MergePageViewTablesDeatiled(String from, String to)
+        {
+            StreamReader sr = new StreamReader(from);
+            StreamWriter sw = new StreamWriter(to, true);
+
+            String str = "";
+            String[] buf = null;
+
+            while ((str = sr.ReadLine()) != null)
+            {
+                String[] items = str.Split('\t');
+                
+
+            }
+
+            sw.Close();
+            sr.Close();
+
+        }
+
+        static public void CleanEditsExactTimeMerge(String from, String to)
+        {
+            StreamReader sr = new StreamReader(from,true);
+            StreamWriter sw = new StreamWriter(to, false);
+
+            String str = "";
+       
+            while ((str = sr.ReadLine()) != null)
+            {
+                String[] items = str.Split('\t');
+                if (items.Length!=12) 
+                {
+                    continue;
+                }
+    
+                items[3] = items[3].Replace("T", " ");
+                items[3] = items[3].Replace("Z", String.Empty);
+                if (items[3]=="2006-09-13 08:42:21")
+                {
+                    items[0] = items[0].Replace(@"\\", String.Empty);
+                    continue;
+                }
+                str = "";
+                for (int i = 0; i < items.Length; i++) str += items[i]+"\t";
+                str = str = str.Substring(0,str.Length - 1);
+                sw.WriteLine(str);
+            }
+
+            sw.Close();
+            sr.Close();
+
+        }
 
     }
 }
