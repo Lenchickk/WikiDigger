@@ -158,6 +158,17 @@ namespace WikiDigger
 
         }
 
+
+        static public String CleanExactTime(String from)
+        {
+            String str = from;
+
+            str = from.Replace("T", " ");
+            str = str.Replace("Z", String.Empty);
+
+            return str;
+        }
+
         static public List<String> ReleaseFile(String file, List<String> list)
         {
             StreamWriter sw = new StreamWriter(file, true, Encoding.UTF8);
@@ -197,6 +208,10 @@ namespace WikiDigger
             Boolean pageFlag = false;
             Boolean readRevisionMode = false;
             String editorID = "";
+            String comment = "";
+            String pageID = "";
+
+
             try
             {
 
@@ -247,9 +262,13 @@ namespace WikiDigger
                     {
                         pageName = XMLreader.Value;
                         if (Common.interestPages.Contains(QuotedPrintable.EncodeQuotedPrintable(pageName))) readRevisionMode = true;
-
+                        while (XMLreader.Name != "id") XMLreader.Read();
+                        XMLreader.Read();
+                        pageID = XMLreader.Value;
+                        flagReadTitle = false;
                     }
                     
+
 
 
                     if (XMLreader.Name == "revision" && XMLreader.NodeType == XmlNodeType.Element)
@@ -293,7 +312,7 @@ namespace WikiDigger
                                 else
                                 {
                                     XMLreader.Read();
-                                    name = XMLreader.Value;
+                                    name = XMLreader.Value.Replace(@"\","_slash_");
                                    
                                     while (XMLreader.Name!="id") XMLreader.Read();
                                     XMLreader.Read();
@@ -302,16 +321,42 @@ namespace WikiDigger
                                     editorID = nameID.ToString();
 
                                 }
+
+                                while (XMLreader.Name != "contributor") XMLreader.Read();
+                                XMLreader.Read();
+                                XMLreader.Read();
+                                if (XMLreader.Name=="comment")
+                                {
+                                    XMLreader.Read();
+                                    comment = XMLreader.Value.Replace('\n', ' ');
+                                    comment = comment.Replace(@"\", " ");
+                                    comment = comment.Replace('\t', ' ');
+                                }
+                                else 
+                                {
+                                    comment = "";
+                                }
+
                                 break;
                             }
 
+
+                          
+
+
+
+
                         }
+
+
+
 
                         if (!editorsStore.ContainsKey(editorID))
                         {
                             List<object> list = new List<object>();
                             list.Add(1);
                             list.Add(1 * inGroup);
+                            name = name.Replace(@"\", "_slash_");
                             list.Add(ip + "\t" + name + "\t" + nameID + "\t" + country + "\t" + troll.ToString() + "\t" + typetroll.ToString() + "\t" + distance.ToString());
                             editorsStore.Add(editorID, list);
                         }
@@ -324,7 +369,7 @@ namespace WikiDigger
                         {
                             ;
                         }
-                        editsStore.Add(pageName + "\t" + inGroup.ToString() + "\t"+ timeString + "\t" + day.ToString("yyyy-MM-dd") + "\t" + ip + "\t" + name + "\t" + nameID + "\t" + country + "\t"   + troll.ToString() + "\t" + typetroll.ToString() + "\t" + distance.ToString());
+                        editsStore.Add(pageName + "\t" + pageID + "\t" + inGroup.ToString() + "\t"+ CleanExactTime(timeString) + "\t" + day.ToString("yyyy-MM-dd") + "\t" + ip + "\t" + name + "\t" + nameID + "\t" + country + "\t"   + troll.ToString() + "\t" + typetroll.ToString() + "\t" + distance.ToString() + "\t" + comment);
                         if (editsStore.Count > 10000) editorsStore = ReleaseFile(Common.editorsFile, editorsStore);
                         if (editsStore.Count > 10000) editsStore = ReleaseFile(Common.editsFile, editsStore);
 

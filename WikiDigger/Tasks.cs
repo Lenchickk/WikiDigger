@@ -127,6 +127,33 @@ namespace WikiDigger
 
         }
 
+        static public void RemoveComments(String from, String to)
+        {
+    
+            StreamWriter sw = new StreamWriter(to,false,Encoding.UTF8);
+            StreamReader sr = new StreamReader(from,true);
+
+            String str = "";
+            
+            while ((str=sr.ReadLine())!=null)
+            {
+                String[] items = str.Split("\t");
+                Int32 len = items.Length;
+                String outstring = "";
+
+                for (int i = 0; i < len - 1; i++) outstring += items[i] + "\t";
+
+                outstring = outstring.Substring(0, outstring.Length - 1);
+                sw.WriteLine(outstring);
+                                            
+
+            }
+
+            sw.Close();
+            sr.Close();
+        }
+
+
         static public void CleanEditsExactTimeMerge(String from, String to)
         {
             StreamReader sr = new StreamReader(from,true);

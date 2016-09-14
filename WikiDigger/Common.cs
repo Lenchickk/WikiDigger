@@ -12,7 +12,8 @@ namespace WikiDigger
         public static SortedDictionary<string, Int64> keys;
         public static SortedDictionary<String, Int64> keysPower;
         // public static String wikixmlFile = @"D:\wp\tube\wikixml\ruwiki-20160720-stub-meta-history.xml\ruwiki-20160720-stub-meta-history.xml";
-        public static String wikixmlFile = baseAddress + @"pipe\store\ruwiki-20160501-stub-meta-history.xml\ruwiki-20160501-stub-meta-history.xml";
+        public static String wikixmlFile = @"C:\work\bigdata\ruwiki-20160901-stub-meta-history.xml\ruwiki-20160901-stub-meta-history.xml";
+        public static String wikixmlFileOld = baseAddress + @"pipe\store\ruwiki-20160501-stub-meta-history.xml\ruwiki-20160501-stub-meta-history.xml";
         public static String outputPagesBasedonCategoryFile = @"D:\wp\tube\pages\pagesbasedCategoryUk.csv";
         static String keyTablePostGre = "keys";
         static String pageTablePostGre = "pages";
@@ -24,8 +25,9 @@ namespace WikiDigger
         static public String AnWarAllAcOut = baseAddress + @"tube\other\anwar\allTweetsAcTranslation1.csv";
         static public String ipRangeRawUSSR = baseAddress + @"tube\ips\post_soviet_range_www.countryipblocks.net.txt";
         static public String ipRangeReadyToTableUSSR = baseAddress + @"tube\ips\post_soviet_rangeip_clean.txt";
-        static public String editsFile = baseAddress + @"tube\editseditors\edits.txt";
-        static public String editorsFile = baseAddress + @"tube\editseditors\editors.txt";
+        static public String editsFile = @"C:\work\bigdata\edits1.txt";
+        static public String editsFileNoComments = @"C:\work\bigdata\edits_no_comments.txt";
+        static public String editorsFile = @"C:\work\bigdata\editors1.txt";
         public static volatile HashSet<String> interestPages = new HashSet<string>();
         public static String getPagesSQL = @"select distinct title from pages where _key<>'Славянск' and _key<>'Минск' and _key<>'Белорусси' and _key<>'Аваков' and _key<>'Аксенов' and nc=14;";
         public static String mergedPageViews = @"C:\Google Drive\PAPERS\WIKI\wikidata\pageViewMerged.txt";

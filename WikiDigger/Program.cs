@@ -15,11 +15,14 @@ namespace WikiDigger
             //Tasks.PutToFileAllPagesForCategoriesRU();
             //Tasks.AddTranslationToAllRecordsTweetsAnWar();
             //Tasks.CleanUSSRIP();
-            //Tasks.CreateEditsAndEditorsTables();
+            Tasks.CreateEditsAndEditorsTables();
+            //Tasks.RemoveComments(Common.editsFile, Common.editsFileNoComments);
+
+            //Tasks.Comments(@"C:\work\bigdata\edits.txt", @"C:\work\bigdata\edits_no_comments.txt");
             //Tasks.MergePageViewTables(Common.PageViewsStub + "pageViews1.txt", Common.mergedPageViews);
             //Tasks.MergePageViewTables(Common.PageViewsStub + "pageViews2.txt", Common.mergedPageViews);
             //Tasks.MergePageViewTables(Common.PageViewsStub + "pageViews3.txt", Common.mergedPageViews);
-            Tasks.CleanEditsExactTimeMerge(Common.editsRawStub + "edits.txt", Common.editsMergedFixedTime);
+            //Tasks.CleanEditsExactTimeMerge(Common.editsRawStub + "edits.txt", Common.editsMergedFixedTime);
     
         }
     }
