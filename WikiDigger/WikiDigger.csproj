@@ -84,6 +84,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="OtherTasks .cs" />
     <Compile Include="Tasks.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -147,6 +147,8 @@ namespace WikiDigger
                 //conn.Open();
 
                 NpgsqlDataAdapter da = new NpgsqlDataAdapter(sqlQuery, conn);
+                da.SelectCommand.CommandTimeout = 5000;
+
                 ds.Reset();
                 // filling DataSet with result from NpgsqlDataAdapter
                 da.Fill(ds);

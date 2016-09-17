@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Data;
 
 namespace WikiDigger
 {
@@ -11,6 +12,97 @@ namespace WikiDigger
     {
         //Create a table with post-soviet ranges to push to PostGreqsql later
        
+        static public void DecodePageNames(String f1, String f2)
+        {
+            StreamReader sr = new StreamReader(f1, Encoding.UTF8);
+            StreamWriter sw = new StreamWriter(f2,false);
+            Dictionary<String, String> mapping = new Dictionary<string, string>();
+
+            String str = "";
+
+            while ((str=sr.ReadLine())!=null)
+            {
+                if (str == "") continue;
+                String[] items = str.Split('\t');
+
+                if (!mapping.ContainsKey(items[1]))
+                {
+                    String import = QuotedPrintable.DecodeQuotedPrintable(items[1], "UTF-8");
+                    import = QuotedPrintable.DecodeQuotedPrintable(import, "UTF-8");
+                    mapping.Add(items[1], QuotedPrintable.DecodeQuotedPrintable(import, "UTF-8"));
+                }
+                items[1] = mapping[items[1]];
+                str = "";
+                foreach (String s in items) str += s + "\t";
+                str = str.Substring(0, str.Length - 1);
+                sw.WriteLine(str);
+            }
+
+            sr.Close();
+            sw.Close();
+        }
+
+
+        static public void BringRowsTogetherAggregatedComment(String fileTo, String sqlRequest)
+        {
+            StreamWriter sw = new StreamWriter(fileTo, false);
+
+            DataTable dt = PostGrePlugIn.getTablePostGre(sqlRequest);
+            List<String> countries = PostGrePlugIn.DataTableToList(PostGrePlugIn.getTablePostGre(Common.getCountriesDB));
+
+            DateTime date=new DateTime();
+            String pagename="";
+            Dictionary<String, String> values=new Dictionary<string, String>();
+            values.Add("troll", "0");
+            values.Add("NS", "0");
+
+            foreach (String c in countries) values.Add(c, "0");
+            String outta = "";
+            bool firstFlag = true;
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                if ((DateTime.Parse(dr[2].ToString())!=date || dr[0].ToString().Trim()!=pagename) && !firstFlag)
+                {
+                    outta = date.ToString("yyyy-MM-dd") + "\t" + pagename + "\t";
+                    foreach (String s in values.Keys)
+                        outta += values[s].ToString() + "\t";
+                    outta = outta.Substring(0, outta.Length - 1);
+                    Int32 totalnontroll = 0;
+                    foreach (String key in values.Keys)
+                    {
+                        if (key == "troll") continue;
+                        totalnontroll += Int32.Parse(values[key]);
+                    }
+                    sw.WriteLine(outta+"\t" + totalnontroll.ToString());
+                    values = new Dictionary<string, string>();
+                    
+                    values.Add("troll", "0");
+                    values.Add("NS", "0");
+                    foreach (String c in countries) values.Add(c, "0");
+                }
+                firstFlag = false;
+                date = DateTime.Parse(dr[2].ToString());
+                pagename = dr[0].ToString().Trim();
+
+                if (dr[3].ToString()=="1")
+                {
+                    values["troll"] = dr[5].ToString();
+                    continue;
+                }
+
+                if (dr[4].ToString()=="")
+                {
+                    values["NS"] = dr[5].ToString();
+                    continue;
+                }
+
+                values[dr[4].ToString().Trim()] = dr[5].ToString();
+
+            }
+            sw.Close();
+        } 
+
         //extact all categories for a set of keywords from Russian Wikipedia
         static public void PutToFileAllCategoriesForKeyWordsRU()
         {
@@ -137,7 +229,7 @@ namespace WikiDigger
             
             while ((str=sr.ReadLine())!=null)
             {
-                String[] items = str.Split("\t");
+                String[] items = str.Split('\t');
                 Int32 len = items.Length;
                 String outstring = "";
 

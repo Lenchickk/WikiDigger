@@ -11,6 +11,8 @@ namespace WikiDigger
         public static String baseAddress = @"D:\wp\";
         public static SortedDictionary<string, Int64> keys;
         public static SortedDictionary<String, Int64> keysPower;
+        public static String aggregatedChangesSQLGroup = "select * from aggregatedcomment order by page, timemark,troll, country;";
+        public static String aggregatedChangesSQLFull = "select * from aggregatedcommentfull order by page, timemark,troll, country;";
         // public static String wikixmlFile = @"D:\wp\tube\wikixml\ruwiki-20160720-stub-meta-history.xml\ruwiki-20160720-stub-meta-history.xml";
         public static String wikixmlFile = @"C:\work\bigdata\ruwiki-20160901-stub-meta-history.xml\ruwiki-20160901-stub-meta-history.xml";
         public static String wikixmlFileOld = baseAddress + @"pipe\store\ruwiki-20160501-stub-meta-history.xml\ruwiki-20160501-stub-meta-history.xml";
@@ -32,7 +34,7 @@ namespace WikiDigger
         public static String getPagesSQL = @"select distinct title from pages where _key<>'Славянск' and _key<>'Минск' and _key<>'Белорусси' and _key<>'Аваков' and _key<>'Аксенов' and nc=14;";
         public static String mergedPageViews = @"C:\Google Drive\PAPERS\WIKI\wikidata\pageViewMerged.txt";
         public static String PageViewsStub = @"C:\Google Drive\PAPERS\WIKI\wikidata\";
-
+        public static String getCountriesDB = "select * from countries;";
         public static String editsMergedFixedTime = @"C:\Google Drive\PAPERS\WIKI\wikidata\editsMerged.txt";
         public static String editsRawStub = @"C:\Google Drive\PAPERS\WIKI\wikidata\";
 
