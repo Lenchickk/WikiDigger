@@ -25,7 +25,8 @@ namespace WikiDigger
             //Tasks.CleanEditsExactTimeMerge(Common.editsRawStub + "edits.txt", Common.editsMergedFixedTime);
             //Tasks.DecodePageNames(@"C:\Google Drive\PAPERS\WIKI\wikidata\detailedpageViews.txt", @"C:\Google Drive\PAPERS\WIKI\wikidata\detailedpageViewsDecoded.txt");
             //QuotedPrintable.DecodeQuotedPrintable("Второй Всеукраинский съезд депутатов всех уровней в %D0%A1%D0%B5в%D0%B5%D1%80%D0%BE%D0%B4%D0%BE%D0%BD%D0%B5%D1%86%D0%BA%D0%B5", "UTF-8");
-            Tasks.BringRowsTogetherAggregatedComment(@"C:\Google Drive\PAPERS\WIKI\wikidata\aggregatedCommentFull.txt", Common.aggregatedChangesSQLFull);
+            //Tasks.BringRowsTogetherAggregatedComment(@"C:\Google Drive\PAPERS\WIKI\wikidata\aggregatedCommentFull.txt", Common.aggregatedChangesSQLFull);
+            OtherTasks.AggregateTweetsUpdated(Common.ISISallreports, Common.ISISuniquesmartAggregated);
         }
     }
 }

@@ -37,6 +37,8 @@ namespace WikiDigger
         public static String getCountriesDB = "select * from countries;";
         public static String editsMergedFixedTime = @"C:\Google Drive\PAPERS\WIKI\wikidata\editsMerged.txt";
         public static String editsRawStub = @"C:\Google Drive\PAPERS\WIKI\wikidata\";
+        public static String ISISallreports = @"C:\Google Drive\PAPERS\IGIL project\old_storage_moved\ISIS_project\карантин\outfullIPIS.csv.csv";
+        public static String ISISuniquesmartAggregated = @"C:\Google Drive\PAPERS\IGIL project\old_storage_moved\ISIS_project\карантин\outfulluniqueaggregatedSMART.csv";
 
 
     }
